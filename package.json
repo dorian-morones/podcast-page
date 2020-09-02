@@ -1,0 +1,29 @@
+{
+  "name": "podcast-page",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next",
+    "start": "next start",
+    "build": "next build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dorian-morones/podcast-page.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dorian-morones/podcast-page/issues"
+  },
+  "homepage": "https://github.com/dorian-morones/podcast-page#readme",
+  "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "next": "^9.5.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
