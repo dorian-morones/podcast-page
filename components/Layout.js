@@ -10,7 +10,7 @@ const Layout = ({ children, title }) => {
                 <meta name="viewport" content="width=device-width" />
             </Head>
 
-            <header><Link href="/"><a>Podcasts</a></Link></header>
+            <header><Link href="/"><a>{title}</a></Link></header>
 
             {children}
 
