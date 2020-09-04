@@ -1,77 +1,75 @@
 import React from 'react'
 import 'isomorphic-fetch'
 import Link from 'next/link'
+import Layout from '../components/Layout'
+import ChannelGrid from '../components/ChannelGrid'
+import PodcastList from '../components/PodcastList'
 
-const Channel = ({ channel, audioClips }) => {
+const Channel = ({ channel, audioClips, series }) => {
 
-    const { title } = channel;
 
-    return (
-        <>
-            <header>Podcast</header>
-            <div className="channels">
-                <h2>{title}</h2>
-                {audioClips.map((clip) => (
-                    <div className="podcast" key={clip.id}>{clip.title}</div>
-                ))}
-            </div>
+  console.log('series', series)
+  return (
+    <>
+      <Layout title={channel.title}>
+        <div className="banner" style={{ backgroundImage: `url(${channel.urls.banner_image.original})` }} />
 
-            <style jsx>{`
-                header {
-                color: #fff;
-                background: #8756ca;
-                padding: 15px;
-                text-align: center;
-                }
-                .channels {
-                display: grid;
-                grid-gap: 15px;
-                padding: 15px;
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                }
-                a.channel {
-                display: block;
-                margin-bottom: 0.5em;
-                color: #333;
-                text-decoration: none;
-                }
-                .channel img {
-                border-radius: 3px;
-                box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
-                width: 100%;
-                }
-                h2 {
-                padding: 5px;
-                font-size: 0.9em;
-                font-weight: 600;
-                margin: 0;
-                text-align: center;
-                }
-            `}</style>
+        <h1>{channel.title}</h1>
 
-            <style jsx global>{`
-                body {
-                margin: 0;
-                font-family: system-ui;
-                background: white;
-                }
-            `}</style>
-        </>
-    )
+        {series.length > 0 &&
+          <div>
+            <h2>Series</h2>
+            <ChannelGrid channels={series} />
+          </div>
+        }
+
+        <h2>Ultimos Podcasts</h2>
+        <PodcastList podcasts={audioClips} />
+
+        <style jsx>{`
+        .banner {
+          width: 100%;
+          padding-bottom: 25%;
+          background-position: 50% 50%;
+          background-size: cover;
+          background-color: #aaa;
+        }
+        h1 {
+          font-weight: 600;
+          padding: 15px;
+        }
+        h2 {
+          padding: 15px;
+          font-size: 1.2em;
+          font-weight: 600;
+          margin: 0;
+        }
+      `}</style>
+      </Layout>
+    </>
+  )
 }
 
 Channel.getInitialProps = async ({ query }) => {
 
-    let idChannel = query.id;
-    let reqChannel = await fetch(`https://api.audioboom.com/channels/${idChannel}`);
-    let dataChannel = await reqChannel.json()
-    let channel = dataChannel.body.channel;
+  let idChannel = query.id;
 
-    let reqAudios = await fetch(`https://api.audioboom.com/channels/${idChannel}/audio_clips`);
-    let dataAudios = await reqAudios.json()
-    let audioClips = dataAudios.body.audio_clips;
-    console.log("a", audioClips)
-    return { channel, audioClips };
+  let [reqChannel, reqAudios, reqSeries] = await Promise.all([
+    fetch(`https://api.audioboom.com/channels/${idChannel}`),
+    fetch(`https://api.audioboom.com/channels/${idChannel}/audio_clips`),
+    fetch(`https://api.audioboom.com/channels/${idChannel}/child_channels`)
+  ])
+
+  let dataChannel = await reqChannel.json()
+  let channel = dataChannel.body.channel;
+
+  let dataAudios = await reqAudios.json()
+  let audioClips = dataAudios.body.audio_clips;
+
+  let dataSeries = await reqSeries.json()
+  let series = dataSeries.body.channels;
+
+  return { channel, audioClips, series };
 }
 
 export default Channel;
